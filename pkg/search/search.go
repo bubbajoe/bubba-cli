@@ -3,9 +3,12 @@ package search
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/bubbajoe/bubba-cli/pkg/util"
 )
 
 func Reverse(input string) (result string) {
@@ -16,14 +19,14 @@ func Reverse(input string) (result string) {
 }
 
 type SearchResult struct {
-	File     *os.File
+	Name     string
 	Position int64
 }
 
 type SearchParam struct {
 	IsRegex  bool
 	Match    string
-	Filename string
+	FilePath string
 	// ReduceFunc func(string) bool
 
 }
@@ -32,18 +35,28 @@ func SearchLine(sp *SearchParam) (<-chan *SearchResult, chan error) {
 	// open file
 	errc := make(chan error, 1)
 	sr := make(chan *SearchResult)
-	file, err := os.Open(sp.Filename)
-	if err != nil {
-		if err == os.ErrNotExist {
-			fmt.Println("asdsdsa")
+	var rdr io.Reader = nil
+	var name string
+	if sp.FilePath == "-" {
+		rdr = os.Stdin
+		name = ":stdin"
+	} else {
+		file, err := os.Open(sp.FilePath)
+		if err != nil {
+			if err == os.ErrNotExist {
+				fmt.Println("asdsdsa")
+			}
+			// s, _ := os.Getwd()
+			// fmt.Println(s)
+			errc <- err
+			return sr, errc
 		}
-		// s, _ := os.Getwd()
-		// fmt.Println(s)
-		errc <- err
-		return sr, errc
+		name = file.Name()
+		defer file.Close()
+		rdr = file
 	}
 
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(rdr)
 	var line int64 = 1
 
 	for scanner.Scan() {
@@ -54,14 +67,11 @@ func SearchLine(sp *SearchParam) (<-chan *SearchResult, chan error) {
 				return sr, errc
 			}
 			if re.MatchString(scanner.Text()) {
-				sr <- &SearchResult{file, line}
+				sr <- &SearchResult{name, line}
 			}
 		} else {
 			if strings.Contains(scanner.Text(), sp.Match) {
-				sr <- &SearchResult{
-					File:     file,
-					Position: line,
-				}
+				sr <- &SearchResult{name, line}
 			}
 		}
 
@@ -87,19 +97,8 @@ func SearchLineMany(srs []*SearchParam, workers int) ([]*SearchResult, error) {
 		close(spc)
 	}()
 	src, errc := SearchLineManyChan(spc, workers)
-	r := ChanToSlice(src)
+	r := util.ChanToSlice(src)
 	return r, <-errc
-}
-
-func ChanToSlice[T any](chv <-chan T) []T {
-	slv := make([]T, 0)
-	for {
-		v, ok := <-chv
-		if !ok {
-			return slv
-		}
-		slv = append(slv, v)
-	}
 }
 
 func SearchLineManyChan(spc <-chan *SearchParam, workers int) (<-chan *SearchResult, <-chan error) {
@@ -121,14 +120,14 @@ func searchLineWorker(workerId int, spc <-chan *SearchParam, src chan<- *SearchR
 	jobIndex := 0
 	for sp := range spc {
 		fmt.Printf("Worker (%d) / Job ID (%d-%d) - Searching for '%s' in '%s'\n", workerId,
-			workerId, jobIndex, sp.Match, sp.Filename)
+			workerId, jobIndex, sp.Match, sp.FilePath)
 		sc, ec := SearchLine(sp)
 		for {
 			select {
 			case result, ok := <-sc:
 				if result != nil {
 					fmt.Printf("Job ID (%d-%d) %s:%d", workerId,
-						jobIndex, result.File.Name(), result.Position)
+						jobIndex, result.Name, result.Position)
 					src <- result
 				} else {
 					fmt.Printf("Job ID (%d-%d) - No result", workerId, jobIndex)

@@ -6,18 +6,6 @@
 
 searches for pattern in specific file(s)
 
-### `rsearch`
-
-searches for a pattern in a directory recursively (defaults to current directory)
-
-### `rfsearch`
-
-searches for a filename that matches the pattern
-
-### `csearch`
-
-searches for pattern in the clipboard
-
 ### `isearch`
 
 searches for a pattern from the standard input.
@@ -48,11 +36,14 @@ decodes a string from percent-encoding
 
 ### `dns`
 
+dns lookup
+
 ### `rdns`
 
 reverse dns loopup
 
-TODO
+## MAYBES?
 
-load a ctx and it will change directories and set specific environment variables
+### `ctx`
+load a ctx, which can change currrent directories and set specific environment variables
 
