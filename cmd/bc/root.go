@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/bubbajoe/bubba-cli/pkg/interactive"
+	"github.com/bubbajoe/bubba-cli/pkg/i9e"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
@@ -34,7 +34,7 @@ this CLT currently contains utliies searching, encode/decode and networking`,
 			"▄▄▄▄· ▄• ▄▌▄▄▄▄· ▄▄▄▄·  ▄▄▄·\n▐█ ▀█▪█▪██▌▐█ ▀█▪▐█ ▀█▪▐█ ▀█\n"+
 				"▐█▀▀█▄█▌▐█▌▐█▀▀█▄▐█▀▀█▄▄█▀▀█\n██▄▪▐█▐█▄█▌██▄▪▐███▄▪▐█▐█ ▪▐▌\n"+
 				"·▀▀▀▀  ▀▀▀ ·▀▀▀▀ ·▀▀▀▀  ▀  ▀")
-		interactive.StartInteractivePrompt()
+		i9e.StartInteractivePrompt()
 	},
 }
 

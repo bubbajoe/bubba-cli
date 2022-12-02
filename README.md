@@ -44,6 +44,10 @@ reverse dns loopup
 
 ## MAYBES?
 
-### `ctx`
-load a ctx, which can change currrent directories and set specific environment variables
+### `env-ctx`
 
+load a environment ctx, which will set specific environment variables
+
+### `count`
+
+count characters or words from file

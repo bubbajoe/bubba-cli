@@ -1,4 +1,4 @@
-package interactive
+package i9e
 
 import (
 	"fmt"
@@ -21,7 +21,7 @@ func StartInteractivePrompt() {
 	setupEnvionmentVariableCmd()
 	setupVsmCommand()
 	for {
-		in := prompt.Input(baseDirectory+"| bb> ", completer,
+		in := prompt.Input(baseDirectory+" bb> ", completer,
 			prompt.OptionTitle("bubba-prompt"),
 			prompt.OptionHistory(history),
 			prompt.OptionPrefixTextColor(prompt.Red),
