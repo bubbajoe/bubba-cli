@@ -20,6 +20,7 @@ func StartInteractivePrompt() {
 	setupSearchCommand()
 	setupEnvionmentVariableCmd()
 	setupVsmCommand()
+	store := NewStore()
 	for {
 		in := prompt.Input(baseDirectory+"| bb> ", completer,
 			prompt.OptionTitle("bubba-prompt"),
@@ -34,6 +35,7 @@ func StartInteractivePrompt() {
 		if in == "" {
 			continue
 		}
+		store.StoreHistoryEntry(in)
 		tokens := strings.Split(in, " ")
 		processInput(tokens[0], tokens)
 	}

@@ -3,6 +3,7 @@ package interactive
 import (
 	"os"
 	"path"
+	"strings"
 )
 
 type Store struct {
@@ -20,15 +21,13 @@ func NewStore() *Store {
 }
 
 func (s *Store) Init() error {
-	err := os.MkdirAll(s.directory, 0700)
+	dir := s.directory
+	if s.storeVsm {
+		dir = path.Join(s.directory, "vsm")
+	}
+	err := os.MkdirAll(dir, 0700)
 	if err != nil {
 		return err
-	}
-	if s.storeVsm {
-		err = os.MkdirAll(path.Join(s.directory, "vsm"), 0700)
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -53,7 +52,9 @@ func (s *Store) StoreHistoryEntry(entry string) error {
 			return err
 		}
 		defer file.Close()
-		_, err = file.WriteString(entry + "\n")
+
+		_, err = file.WriteString(
+			strings.TrimSpace(entry) + "\n")
 		if err != nil {
 			return err
 		}

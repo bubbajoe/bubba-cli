@@ -1,4 +1,4 @@
-# bubba-cli
+# bubba-cli (WIP)
 
 ## Searching
 
@@ -6,13 +6,19 @@
 
 searches for pattern in specific file(s)
 
-### `isearch`
+#### USAGE
 
-searches for a pattern from the standard input.
+```bash
+bb search $TARGET
+bb search -d $PATH $TARGET # default $PATH="."
+bb search -r $TARGET # r () search through all dire
+bb search -R ^.*\.txt$ $TARGET # -r means TARGET must be a valid golang regular expression
+bb search -n ^.*\.txt$ $TARGET # n (name regex) search through all files name
+```
 
 ### `vsm`
 
-Create an Index which used VSM. and inteactively search through that index.
+Create an index which used VSM and inteactively search through that index.
 
 ## Encode/Decode
 
@@ -42,8 +48,4 @@ dns lookup
 
 reverse dns loopup
 
-## MAYBES?
-
-### `ctx`
-load a ctx, which can change currrent directories and set specific environment variables
 

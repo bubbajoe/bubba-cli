@@ -45,7 +45,6 @@ func completer(in prompt.Document) []prompt.Suggest {
 	)
 	m := s
 	firstWord := strings.Split(in.TextBeforeCursor(), " ")[0]
-	// fmt.Printf("'%s'-'%s'\n", in.TextBeforeCursor(), firstWord)
 	if _, ok := namespaceSuggestions[firstWord]; ok {
 		return prompt.FilterHasPrefix(
 			namespaceSuggestions[firstWord](in.TextBeforeCursor()),
